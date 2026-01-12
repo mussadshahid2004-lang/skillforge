@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skill Forge</title>
+    <link rel="stylesheet" href="./static/css/style.css">
+    <style>
+        :root { --red: #e50914; --bg: #000; }
+
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
+
+        /* SEARCH BOX */
+        .search-container { position: relative; width: 350px; }
+        .search-box { display: flex; background: #111; border: 1px solid #333; padding: 8px 15px; border-radius: 24px; }
+        .search-box input { background: transparent; border: none; color: #fff; outline: none; width: 100%; font-size: 1rem; }
+
+        /* HEADER & LOGO */
+        header { 
+            padding: 15px 2%; display: flex; justify-content: space-between; align-items: center; 
+            background: rgba(0,0,0,0.95); border-bottom: 2px solid var(--red); position: sticky; top: 0; z-index: 1000; 
+        }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .logo-btn { text-decoration: none; color: #fff; font-size: 1.8rem; font-weight: bold; }
+        .red { color: var(--red); }
+
+        /* Main Layout */
+        .detail-body { padding: 20px 2% 60px 2%; display: grid; grid-template-columns: 1fr; gap: 40px; background-color: #000;}
+
+        .info-card { background: linear-gradient(145deg, #111, #080808); padding: 40px; border-radius: 12px; border-left: 6px solid var(--red); box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 100%; box-sizing: border-box; }
+        .info-card h2 { color: var(--red); margin: 0 0 20px 0; font-size: 2.8rem; text-transform: uppercase; letter-spacing: 3px; font-weight: 900; border-bottom: 1px solid #333; padding-bottom: 15px; }
+
+        .intro-text, .benefits-text { line-height: 1.9; color: #e0e0e0; font-size: 1.35rem; margin: 0; text-align: justify; }
+        .benefits-text { white-space: pre-line; }
+
+        .hero-image-container { width: 621px; height: 492px; background-color: #ffffff; display: flex; justify-content: center; align-items: center; border-radius: 4px; overflow: hidden; }
+        .hero-image-container img { max-width: 90%; max-height: 90%; object-fit: contain; }
+
+        .btn-container { display: flex; gap: 20px; margin-top: 35px; }
+        .action-btn { padding: 16px 40px; font-size: 1.1rem; font-weight: 800; text-decoration: none; border-radius: 4px; text-transform: uppercase; transition: 0.3s; }
+        .download-btn { background: var(--red); color: white; }
+        .course-btn { border: 2px solid #fff; color: white; }
+        .action-btn:hover { transform: scale(1.05); }
+
+        footer { padding: 50px 2%; border-top: 1px solid #222; margin-top: 60px; color: #888; text-align: center; }
+        .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 20px; }
+        .footer-links a { color: #888; text-decoration: none; font-size: 0.9rem; }
+        .footer-links a:hover { color: #fff; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="./" class="logo-btn">SKILL <span class="red">FORGE</span></a>
+
+        <div class="header-right">
+            <div class="search-container">
+                <div class="search-box">
+                    <input id="searchInput" type="text" placeholder="Search apps...">
+                </div>
+            </div>
+
+            <a href="index.html" style="color:white; text-decoration:none; font-weight:bold; border: 1px solid #444; padding: 10px 25px; border-radius: 30px; font-size: 0.9rem;">← BACK HOME</a>
+        </div>
+    </header>
+
+    <div class="hero" style="min-height: 550px; background: radial-gradient(circle at center, #181818 0%, #000 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 2%;">
+        <div class="hero-text" style="flex: 1; padding-left: 1%;">
+            <h1 id="appName" style="font-size: 6rem; margin: 0; letter-spacing: -3px; line-height: 1;">Loading...</h1>
+            <p id="appDesc" style="font-size: 1.6rem; color: #999; margin-top: 20px; border-left: 5px solid var(--red); padding-left: 20px; max-width: 700px; text-align: justify;">Please wait</p>
+            
+            <div class="btn-container">
+                <a href="https://getintopc.com/" target="_blank" class="action-btn download-btn">Download Now</a>
+                <a href="https://www.youtube.com/" target="_blank" class="action-btn course-btn">Get Course</a>
+            </div>
+        </div>
+
+        <div class="hero-visual" style="flex: 1; display: flex; justify-content: flex-end; padding-right: 1%;">
+            <div class="hero-image-container">
+                <img id="heroImg" src="" alt="App visual">
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-body">
+        <div class="info-card">
+            <h2>Detailed Introduction</h2>
+            <p id="introText" class="intro-text">Loading...</p>
+        </div>
+
+        <div class="info-card">
+            <h2>Key Technical Benefits</h2>
+            <p id="benefitsText" class="benefits-text">Loading...</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">help</a>
+            <a href="#">terms of use</a>
+            <a href="#">privacy</a>
+            <a href="#">contact us</a>
+            <a href="#">cookie preference</a>
+        </div>
+        <p>© 2026 Skill Forge Hub | 23-ME-131@students.uettaxila.edu.pk</p>
+    </footer>
+
+    <script src="./static/js/data.js"></script>
+    <script>
+        const staticBase = './static';
+
+        function matchApps(query) {
+            const q = query.trim().toLowerCase();
+            if (!q) return [];
+            return Object.entries(appsData)
+                .map(([id, app]) => ({ id, name: app.name, desc: app.desc }))
+                .filter(app => app.name.toLowerCase().includes(q) || app.id.toLowerCase().includes(q))
+                .slice(0, 6);
+        }
+
+        function goToApp(id) {
+            window.location.href = `details.html?id=${id}`;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const appId = params.get('id') || heroRotation[0];
+        const app = appsData[appId];
+
+        if (!app) {
+            document.getElementById('appName').innerText = 'App not found';
+            document.getElementById('appDesc').innerText = 'Try another search.';
+            document.getElementById('introText').innerText = 'No data available for this app.';
+            document.getElementById('benefitsText').innerText = '';
+        } else {
+            document.getElementById('appName').innerText = app.name;
+            document.getElementById('appDesc').innerText = app.desc;
+            document.getElementById('heroImg').src = `${staticBase}/images/${app.img}`;
+            document.getElementById('heroImg').alt = app.name;
+            document.getElementById('introText').innerText = app['Detailed Introduction'] || app.long_intro || app.desc;
+            document.getElementById('benefitsText').innerText = app['Key Technical Benefits'] || app.long_benefits || '';
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const matches = matchApps(searchInput.value);
+                if (matches.length) {
+                    goToApp(matches[0].id);
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
