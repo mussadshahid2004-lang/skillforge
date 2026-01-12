@@ -1,11 +1,166 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta http-equiv="refresh" content="0; url=templates/index.html">
-  <title>Skill Forge</title>
+    <title>Skill Forge</title>
+    <link rel="stylesheet" href="./static/css/style.css">
 </head>
-<body style="background:#000; color:#fff; font-family:Arial, sans-serif; text-align:center; padding-top:100px;">
-  <p>Redirecting to Skill Forge...</p>
-  <p><a href="templates/index.html" style="color:#e50914; text-decoration:none;">Click here if you are not redirected.</a></p>
+<body>
+    <header>
+        <a href="./" class="logo-btn">SKILL <span class="red">FORGE</span></a>
+        <div class="search-container">
+            <div class="search-box">
+                <input type="text" id="search" placeholder="Search apps...">
+            </div>
+            <div id="recBox" style="position:absolute; background:#111; width:100%; display:none; z-index:1001;"></div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-text">
+            <h1 id="hTitle">Skill Forge</h1>
+            <p id="hDesc">Explore the best tools for engineering, design, data, and creativity.</p>
+            <a id="hBtn" href="details.html?id=ansys_mechanical" style="background:var(--red); color:white; padding:15px 40px; text-decoration:none; font-weight:bold; border-radius:4px;">Get Started</a>
+        </div>
+        <div class="hero-visual">
+            <img id="hImg" src="../static/images/ansys_mechanical.jpg" alt="Featured app">
+        </div>
+    </section>
+
+    <div id="sliders"></div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#">help</a>
+            <a href="#">terms of use</a>
+            <a href="#">privacy</a>
+            <a href="#">contact us</a>
+            <a href="#">cookie preference</a>
+        </div>
+        <p>© 2026 Skill Forge Hub | 23-ME-131@students.uettaxila.edu.pk</p>
+    </footer>
+
+    <script src="./static/js/data.js"></script>
+    <script>
+        const staticBase = './static';
+        const slidersRoot = document.getElementById('sliders');
+        const searchInput = document.getElementById('search');
+        const recBox = document.getElementById('recBox');
+
+        function setHero(appId) {
+            const app = appsData[appId];
+            if (!app) return;
+            document.getElementById('hTitle').innerText = app.name;
+            document.getElementById('hDesc').innerText = app.desc;
+            document.getElementById('hImg').src = `${staticBase}/images/${app.img}`;
+            document.getElementById('hBtn').href = `details.html?id=${appId}`;
+        }
+
+        let heroIndex = 0;
+        setHero(heroRotation[heroIndex]);
+        setInterval(() => {
+            heroIndex = (heroIndex + 1) % heroRotation.length;
+            setHero(heroRotation[heroIndex]);
+        }, 5000);
+
+        function buildSliders() {
+            Object.entries(categories).forEach(([cat, ids]) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'slider-container';
+
+                const heading = document.createElement('h2');
+                heading.innerText = cat;
+                wrap.appendChild(heading);
+
+                const left = document.createElement('button');
+                left.className = 'handle left-handle';
+                left.innerHTML = '&#8249;';
+                const right = document.createElement('button');
+                right.className = 'handle right-handle';
+                right.innerHTML = '&#8250;';
+
+                const slider = document.createElement('div');
+                slider.className = 'slider';
+
+                ids.forEach(id => {
+                    const app = appsData[id];
+                    if (!app) return;
+                    const link = document.createElement('a');
+                    link.href = `details.html?id=${id}`;
+                    link.className = 'poster';
+
+                    const img = document.createElement('img');
+                    img.src = `${staticBase}/images/${app.img}`;
+                    img.alt = app.name;
+                    link.appendChild(img);
+
+                    const label = document.createElement('div');
+                    label.className = 'poster-label';
+                    label.innerText = app.name;
+                    link.appendChild(label);
+
+                    slider.appendChild(link);
+                });
+
+                wrap.appendChild(left);
+                wrap.appendChild(slider);
+                wrap.appendChild(right);
+
+                left.addEventListener('click', () => scrollSlide(slider, -1));
+                right.addEventListener('click', () => scrollSlide(slider, 1));
+
+                slidersRoot.appendChild(wrap);
+            });
+        }
+
+        function scrollSlide(slider, dir) {
+            slider.scrollBy({ left: slider.clientWidth * 0.8 * dir, behavior: 'smooth' });
+        }
+
+        function matchApps(query) {
+            const q = query.trim().toLowerCase();
+            if (!q) return [];
+            return Object.entries(appsData)
+                .map(([id, app]) => ({ id, name: app.name, desc: app.desc }))
+                .filter(app => app.name.toLowerCase().includes(q) || app.id.toLowerCase().includes(q))
+                .slice(0, 6);
+        }
+
+        function renderSuggestions(list) {
+            recBox.innerHTML = '';
+            if (!list.length) {
+                recBox.style.display = 'none';
+                return;
+            }
+            list.forEach(app => {
+                const item = document.createElement('div');
+                item.innerText = `${app.name} — ${app.desc}`;
+                item.addEventListener('click', () => goToApp(app.id));
+                recBox.appendChild(item);
+            });
+            recBox.style.display = 'block';
+        }
+
+        function goToApp(id) {
+            window.location.href = `details.html?id=${id}`;
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const matches = matchApps(e.target.value);
+            renderSuggestions(matches);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const matches = matchApps(e.target.value);
+                if (matches.length) {
+                    goToApp(matches[0].id);
+                } else {
+                    recBox.style.display = 'none';
+                }
+            }
+        });
+
+        buildSliders();
+    </script>
 </body>
 </html>
